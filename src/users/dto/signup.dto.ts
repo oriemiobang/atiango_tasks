@@ -14,11 +14,10 @@ export class SignUpDto {
     password: string;
 
     @IsEnum(Auth_Provider)
-    auth_provider: string;
+    auth_provider: Auth_Provider;
 
-
-    @IsString()
     @IsOptional()
-    profile_image_url: Auth_Provider;
+    @IsString()
+    profile_image_url?: string;
 
 }
