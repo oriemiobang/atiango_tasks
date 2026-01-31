@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/users/auth/auth.guard';
 import { TasksDto } from './dto/tasks.dto';
 import { TasksService } from './tasks.service';
+import { Status_Enum } from '@prisma/client';
+import { stat } from 'fs';
 
 @Controller('tasks')
 export class TasksController {
@@ -21,22 +23,36 @@ export class TasksController {
     }
 
     // update task
-    @Post()
-    updateTask(){
-
+     @UseGuards(AuthGuard)
+    @Patch('/update-task/:id')
+     async  updateTask(@Body() body: TasksDto, @Param('id') taskId: number){
+        return await this.taskService.updateTask(body, +taskId );
     }
 
     // get tasks
-    @Get()
-    getTask(){
-
+      @UseGuards(AuthGuard)
+    @Get('/get-tasks')
+   async getTasks(@Req() req){
+    return this.taskService.getAllTask(req.user.id);
     }
 
     // delete task
-    @Delete()
-    deleteTask(){
+    @Delete('/delete-task/:id')
+   async deleteTask(@Param('id') id: number, @Req() req){
+        return await this.taskService.deleteTask(+id, req.user.id);
         
     }
 
+
+    @Patch('/update-sort-order/:id')
+    async updateSortOrder(@Param('id') taskId:number, @Body('sort_order') sortId: number, @Req() req){
+       return this.taskService.updateTaskOrder(+taskId, req.user.id,+sortId)
+
+    }
+
+    @Patch('/update-status/:id')
+    async updateStatus (@Param('id') taskId: number, @Body('status') status: Status_Enum, @Req() req){
+       return await  this.taskService.updateStatus(req.user.id, +taskId, status)
+    }
     
 }
