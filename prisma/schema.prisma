@@ -22,12 +22,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
-
 enum Auth_Provider {
   LOCAL
   GOOGLE
   FACEBOOK
+}
+
+enum Status_Enum {
+  UPCOMING
+  PROGRESS
+  COMPLETED
 }
 
 model User {
@@ -37,7 +41,24 @@ model User {
   password          String
   auth_provider     Auth_Provider
   profile_image_url String?
+  task              Task[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String
+  start_time  DateTime
+  deadline    DateTime?
+  sort_order  Int
+  status      Status_Enum
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+
+  user User @relation(fields: [userId], references: [id])
 }

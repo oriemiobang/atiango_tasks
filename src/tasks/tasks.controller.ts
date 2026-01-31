@@ -1,7 +1,12 @@
-import { Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/users/auth/auth.guard';
+import { TasksDto } from './dto/tasks.dto';
+import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
+
+    constructor(private taskService: TasksService){}
 
 
 
@@ -9,8 +14,11 @@ export class TasksController {
 
 
     // add task
-    @Post()
-    addTask(){}
+    @UseGuards(AuthGuard)
+    @Post('/add-task')
+   async addTask(@Body() body: TasksDto, @Req() req){
+        return await this.taskService.addTask(body, req.user.id);
+    }
 
     // update task
     @Post()

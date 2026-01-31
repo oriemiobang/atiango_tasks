@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { SignUpDto } from './dto/signup.dto';
 import { SigninDto } from './dto/signin.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -61,6 +61,64 @@ export class UsersService {
     return {accessToken: token}
         
     }
+
+    async updateName(userId: number, name:string){
+        const user = await this.prisma.user.findUnique({
+            where: {
+               id: userId
+            }
+        });
+
+        if(!user){
+            throw new NotFoundException("User not found")
+        }
+
+        return await this.prisma.user.update({
+            where : {
+                id: userId
+            },
+            data: {
+                name
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true
+            }
+        })
+
+    }
+
+
+  async  updatePassword(userId: number, input_password: string){
+        const user = await this.prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if(!user){
+            throw new NotFoundException("User not found");
+        }
+
+        const password = await bcrypt.hash(input_password, 10);
+
+        return await this.prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {password},
+
+            select: {
+                email: true,
+                id: true
+            }
+
+        })
+
+    }
+
+
 
 
     
