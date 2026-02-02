@@ -42,6 +42,7 @@ model User {
   auth_provider     Auth_Provider
   profile_image_url String?
   task              Task[]
+  notification      Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,4 +71,19 @@ model SubTask {
   isDone Boolean? @default(false)
   taskId Int
   task   Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+}
+
+
+model Notification {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  isRead Boolean? @default(false)
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+
 }

@@ -4,7 +4,7 @@ import { SigninDto } from './dto/signin.dto';
 import { UsersService } from './users.service';
 import { Public } from './auth/public.decorator';
 import { UpdateNameDto } from './dto/update_name.dto';
-import { AuthGuard } from './auth/auth.guard';
+
 import { UpdatePasswordDto } from './dto/update_password.dto';
 
 @Controller('auth')
@@ -31,7 +31,7 @@ export class UsersController {
     }
 
 
-    @UseGuards(AuthGuard)
+
     @Post('/update-name')
     updateName(@Body() body: UpdateNameDto, @Req() req){
         const userId = req.user.id;

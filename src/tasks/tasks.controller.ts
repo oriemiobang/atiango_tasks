@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/users/auth/auth.guard';
+
 import { TasksDto } from './dto/tasks.dto';
 import { TasksService } from './tasks.service';
 import { Status_Enum } from '@prisma/client';
@@ -10,27 +10,19 @@ export class TasksController {
 
     constructor(private taskService: TasksService){}
 
-
-
-    
-
-
     // add task
-    @UseGuards(AuthGuard)
     @Post('/add-task')
    async addTask(@Body() body: TasksDto, @Req() req){
         return await this.taskService.addTask(body, req.user.id);
     }
 
     // update task
-     @UseGuards(AuthGuard)
     @Patch('/update-task/:id')
      async  updateTask(@Body() body: TasksDto, @Param('id') taskId: number){
         return await this.taskService.updateTask(body, +taskId );
     }
 
     // get tasks
-      @UseGuards(AuthGuard)
     @Get('/get-tasks')
    async getTasks(@Req() req){
     return this.taskService.getAllTask(req.user.id);

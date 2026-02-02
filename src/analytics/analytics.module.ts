@@ -1,19 +1,21 @@
 import { Module } from '@nestjs/common';
-import { NotificationsController } from './notifications.controller';
-import { NotificationsService } from './notifications.service';
+// import { AnalyticsController } from './analytics.controller';
+import { AnalyticsService } from './analytics.service';
 import { PrismaService } from 'src/prisma.service';
+import { AnalyticsController } from './analytics.controller';
 import { JwtStrategy } from 'src/users/auth/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'src/users/auth/jwt-auth.guard';
 
 @Module({
-    controllers: [NotificationsController],
+    controllers: [AnalyticsController],
     providers: [
           JwtStrategy,
                   {
                     provide: APP_GUARD,
                     useClass: JwtAuthGuard,
                   },
-        NotificationsService, PrismaService]
+        PrismaService,
+        AnalyticsService]
 })
-export class NotificationsModule {}
+export class AnalyticsModule {}
