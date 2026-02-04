@@ -18,6 +18,6 @@ export class SignUpDto {
 
     @IsOptional()
     @IsString()
-    profile_image_url?: string;
+    profile_image_url?: 'gs://dha-anywaa-challange.appspot.com/blank_profile.png';
 
 }

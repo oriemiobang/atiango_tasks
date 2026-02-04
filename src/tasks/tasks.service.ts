@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 // import { StatusEnum } from 'src/enum/status.enum';
 import { PrismaService } from 'src/prisma.service';
 import { TasksDto } from './dto/tasks.dto';
@@ -24,7 +24,7 @@ export class TasksService {
         ? {
             create: payload.subtasks.map(subtask => ({
               title: subtask.title,
-              isD: subtask.isDone ?? false,
+              isDone: subtask.isDone ?? false,
             })),
           }
         : undefined,
@@ -39,8 +39,7 @@ export class TasksService {
       user: {
         select: {
           id: true,
-          email: true,
-          name: true,
+          email: true
         },
       },
     },
@@ -163,11 +162,6 @@ async updateStatus(userId: number, taskId: number, status: Status_Enum){
     if(!task){
         throw new NotFoundException("Task Not Found!")
     }
-
-    if(task.userId !== userId){
-        throw new UnauthorizedException("You are not Authorized to change this")
-    }
-
     return await this.prisma.task.update({
         where: {
             id: taskId}, 
@@ -179,6 +173,43 @@ async updateStatus(userId: number, taskId: number, status: Status_Enum){
             status: true
         }
     })
+}
+
+async updateSubTask(
+  taskId: number,
+  subTaskId: number,
+  data: {
+    title?: string;
+    isDone?: boolean;
+  },
+) {
+  // 1️⃣ Check task existence
+  const task = await this.prisma.task.findUnique({
+    where: { id: taskId },
+  });
+
+  if (!task) {
+    throw new NotFoundException('Task not found');
+  }
+
+
+  const subTask = await this.prisma.subTask.findUnique({
+    where: { id: subTaskId },
+  });
+
+  if (!subTask) {
+    throw new NotFoundException('Subtask not found');
+  }
+
+  if (subTask.taskId !== taskId) {
+    throw new BadRequestException('Subtask does not belong to this task');
+  }
+
+  // 3️⃣ Update subtask
+  return this.prisma.subTask.update({
+    where: { id: subTaskId },
+    data,
+  });
 }
 
 

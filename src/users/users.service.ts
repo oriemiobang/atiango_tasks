@@ -30,7 +30,9 @@ export class UsersService {
             data: payload,
             select: {
                 id: true,
-                email: true
+                email: true,
+                name: true,
+                profile_image_url: true
             }
 
         });
@@ -56,6 +58,8 @@ export class UsersService {
     const token  = await this.jwtService.signAsync({
         id: user.id,
         email: user.email,
+        name: user.name,
+        imageUrl: user.profile_image_url
     })
 
     return {accessToken: token}
@@ -83,6 +87,7 @@ export class UsersService {
             select: {
                 id: true,
                 email: true,
+                profile_image_url: true,
                 name: true
             }
         })

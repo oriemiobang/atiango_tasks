@@ -4,6 +4,7 @@ import { TasksDto } from './dto/tasks.dto';
 import { TasksService } from './tasks.service';
 import { Status_Enum } from '@prisma/client';
 import { stat } from 'fs';
+import { SubTaskDto } from './dto/sub_task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -46,5 +47,13 @@ export class TasksController {
     async updateStatus (@Param('id') taskId: number, @Body('status') status: Status_Enum, @Req() req){
        return await  this.taskService.updateStatus(req.user.id, +taskId, status)
     }
+
+
+    @Patch('/update-subTask/:taskId/subtask/:subTaskId')
+    updateSubTask(@Param('taskId') taskId: number,
+    @Param('subTaskId') subTaskId: number,
+    @Body() dto: SubTaskDto,){ 
+       return this.taskService.updateSubTask(+taskId, +subTaskId, dto);
+}
     
 }
